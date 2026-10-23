@@ -1,0 +1,74 @@
+# Justification des choix 
+
+## Volet 1: Choix du jeu de données
+### Voici les critères qui doivent être respectés:
+1. Format .csv ou convertible en .csv
+2. Entre 500 et 50 000 lignes avec au moins 5 colonnes d'entrées 
+3. Une colonne cible claire
+    - Catégorie à prédire: Classification 
+    - Valeur numérique à estimer: Régression 
+4. Types de variables: 
+    - Minimmum 1 numérique 
+    - Minimum 1 catégorielle
+5. Licence compatible avec usage éducatif
+6. Ne contient aucune données personnelles identifiables 
+7. Jeux exclus (ne prédit pas le résultat d'une partie)
+
+### Voici les Validations à présenter: 
+#### Pourquoi ce domaine ? Que peut faire un utilisateur avec l'application ?
+#### Pourquoi ce jeu de connées plutôt qu'un autre ? Comment ont étées faites les vérifications ?
+
+## Volet 2: Entraîner un modèle simple 
+- Type: Régression linéaire ou logistique / k plus proches voisins / Arbre de décisions / Forêt aléatoire 
+### Étapes attendues
+1. Explorer et nettoyer 
+    - Nettoyage avec Pandas 
+    - Examiner les types 
+    - Valeurs manquantes & aberrantes
+    - Expliquer ce qui a été corrigé 
+    - Production d'un graphique d'exploration 
+2. Définir le problème 
+    - Variable cible 
+    - Type de problème (classification / régression)
+    - Métrique d'évaluation justifiée (exactitude, F1, RMSE, R2, etc.)
+3. Séparer les données 
+    - Ensembles d'entraînement et de test (`train_test_split`) avec une graine aléatoire fixée
+    - Jamais d'évaluation sur les données d'entraînement 
+4. Établir une référence 
+    - Modèle trivial (classe majoritaire, moyenne) permet de savoir si on est meilleur qu'aucun modèle du tout 
+5. Entraîner et évaluer 
+    - Entraîner le modèle choisi 
+    - Calculer la métrique (tester)
+    - Comparer à la référence
+    - Commenter honnêtement les résultats (et les limites)
+        - Matrice de confusion 
+        - Graphique (prédit contre réel)
+6. Sauvegarder 
+    - Enregistrer le modèle (`joblib`)
+    - Enregistrer un fichier de métadonnées
+        - Noms colonnes 
+        - Valeurs possibles des variables catégorielles
+        - Intervalles des variables numériques
+        - Métrique obtenue
+    - Interface en a besoin pour se construire (modèle jamais réentraîné)
+
+## Volet 3: Développer l'interface graphique 
+### Fonctionnalités demandées 
+- Saisie des caractéristiques 
+- Validation des saisies (erreurs claires)
+- Prédiction (résultat et indice de confiance)
+- Graphique intégré (`MatPlotLib`) - (Importance des variables, position de la prédiction dans la distribution, matrice de confusion, prédit vs. réel)
+- Historique: Chaque prédiction est ajoutée à un fichier pouvant être consulté
+- Avertissement: Domaine sensible - L'interface indique que c'est un outil pédagogique
+
+## Autres: 
+1. Au moins 8 pytests
+2. Couverture (?)
+3. Github Workflow Actions
+4. Au moins 3 classes 
+5. Classe parente abstraite
+6. Au moins une classe qui contient des instances de d'autres classes 
+7. Calcul vectorisé dans la logique du projet (calculer avec Numpy et vérifier que ça concorde avec scikit-learn)
+8. 2 Graphiques (1 sauvegardé)
+9. Documentation officielle (avec sources)
+10. Journal d'utilisation de l'IA (avec vérification)
