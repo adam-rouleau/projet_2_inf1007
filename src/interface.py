@@ -25,6 +25,7 @@ class FenetrePrincipale(QMainWindow):
         widget_principal.setLayout(self.__layout_principal)
 
         titre_application = QLabel("Titre Principal")
+        titre_application.setObjectName("titre")
         self.__layout_principal.addWidget(titre_application)
 
         # Forms 
