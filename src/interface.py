@@ -1,3 +1,5 @@
+from PyQt6.QtCore import Qt
+
 from PyQt6.QtWidgets import (  
     QMainWindow, 
     QWidget,
@@ -5,6 +7,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QLineEdit,
+    QComboBox,
     QPushButton,
 )
 
@@ -17,30 +20,61 @@ class FenetrePrincipale(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Projet 2 - Adam Rouleau, Eliott Magnet Da Costa")
+        self.setWindowTitle("Projet 2 - Adam Rouleau, Eliott Magnet Da Costa: Prédicteur de succès au Box Office")
         widget_principal = QWidget()
         self.setCentralWidget(widget_principal)
 
         self.__layout_principal = QVBoxLayout()
         widget_principal.setLayout(self.__layout_principal)
 
-        titre_application = QLabel("Titre Principal")
+        titre_application = QLabel("Prédicteur de succès au Box Office")
+        titre_application.setAlignment(Qt.AlignmentFlag.AlignCenter)
         titre_application.setObjectName("titre")
+        self.__layout_principal.addWidget(titre_application)
+
+        titre_application = QLabel("Entrez les données d'un film et découvrez s'il sera un succès ! \n Le film est considéré un succès si le revenu est 3x le budget ainsi qu'au-dessus de 100M$.")
+        titre_application.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        titre_application.setObjectName("sous_titre")
         self.__layout_principal.addWidget(titre_application)
 
         # Forms 
         layout_questions = QVBoxLayout()
         self.__layout_principal.addLayout(layout_questions)
 
-        self.question_1 = self.ajouter_form("Question 1", layout_questions, "Reponse Placeholder")
-        self.question_1.textChanged.connect(self.on_text_changed)
+        label_question_comedie = QLabel("Genre")
+        self.__layout_principal.addWidget(label_question_comedie)
+        self.question_genre = QComboBox()
+        self.question_genre.addItems(["Comédie", 
+                                      "Science-Fiction", 
+                                      "Horreur", 
+                                      "Documentaire", 
+                                      "Action", 
+                                      "Suspense", 
+                                      "Romance", 
+                                      ])
+        self.__layout_principal.addWidget(self.question_genre)
 
-        self.question_2 = self.ajouter_form("Question 2", layout_questions, "Reponse Placeholder")
+        self.question_2 = self.ajouter_form("Budget", layout_questions, "Reponse Placeholder")
         self.question_2.textChanged.connect(self.on_text_changed)
+
+        self.question_3 = self.ajouter_form("Rating", layout_questions, "Reponse Placeholder")
+        self.question_3.textChanged.connect(self.on_text_changed)
+
+        self.question_4 = self.ajouter_form("Runtime", layout_questions, "Reponse Placeholder")
+        self.question_4.textChanged.connect(self.on_text_changed)
+
+
+        # Layout Boutons
+        layout_boutons = QHBoxLayout()
+        self.__layout_principal.addLayout(layout_boutons)
 
         self.bouton_predire = QPushButton("Prédire")
         self.bouton_predire.clicked.connect(self.predire)
-        self.__layout_principal.addWidget(self.bouton_predire)
+        layout_boutons.addWidget(self.bouton_predire)
+
+        self.bouton_generer_graphique = QPushButton("Générer Graphique")
+        self.bouton_generer_graphique.clicked.connect(self.generer_graphique)
+        layout_boutons.addWidget(self.bouton_generer_graphique)
 
     def ajouter_form(self, question:str, layout:QVBoxLayout, placeholder:str="") -> QLineEdit:
         '''
@@ -81,3 +115,11 @@ class FenetrePrincipale(QMainWindow):
         self.valeur_question_1 = self.question_1.text()
         self.valeur_question_2 = self.question_2.text()
         print("Réponse question 1: " + self.valeur_question_1 + "\nRéponse question 2: " + self.valeur_question_2)
+
+    def generer_graphique(self):
+        '''
+        Générer Graphique est la fonction actionnée quand le bouton "Générer Graphique" est pressé.
+
+        Entrée: self (fenêtre principale)
+        Retourne:
+        '''

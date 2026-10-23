@@ -1,3 +1,7 @@
 QLabel#titre {
     font-size: 40px;
 }
+
+QLabel#sous_titre {
+    font-size: 20px;
+}
