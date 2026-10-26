@@ -1,0 +1,96 @@
+# Fonctionnement de Scikit-learn
+
+## Etapes du Machine Learning
+```mermaid 
+flowchart LR
+A[Data] --> B[Model]
+B --> C[Prediction]
+```
+
+### Probleme: Scaling
+Si on ne fait pas de scaling, un des axes peut avoir un effet beaucoup trop grand sur le calcul mathematique de la prediction. 
+Exemple: 
+$ \text{Data:} \ \begin{cases} X \ \text{Proximite depuis une ecole (km)} \\ Y \ \text{Prix de la maison (\$)} \end{cases} $
+
+On fait donc un scaling des variables au besoin 
+
+```mermaid 
+flowchart LR
+A[Data]
+subgraph Variables[Variables]
+    A1[X]
+    A2[Y]
+end
+subgraph GridSearch[Grid Search CV - Modele]
+C[Settings]
+    subgraph Pipeline[Pipeline Modele]
+        B[Scaling]
+        D[Modele]
+    end
+end
+E[Prediction]
+
+A --> A1
+A --> A2
+A1 --> B
+B --> D
+A2 --> D
+C --> D
+D --> E
+```
+
+## Data
+$ \text{Data:} \ \begin{cases} X \ \text{Variables d'entree} \\ Y \ \text{Variable de sortie} \end{cases} $
+
+### Regarder les variables importantes
+1. Est-ce que toutes les variables sont utiles 
+2. Est-ce que les donnees sont encore valides de nos jours ?
+3. Est-ce que toutes les variables sont utiles ?
+
+## Modele 
+- Peprocessing (Objet Python `Pipeline`)
+    - Scale (`"scale"`)
+    - Modele (`"model"`)
+- Test des settings (`GridSearchCV`)
+    - Agit exactement comme un modele
+    - `GridSearchCV(estimator=pipeline, param_grid={})`
+    - Permet de comparer la performance d'un meme modele avec des parametres differents
+    - On utilise differentes parties des datasets pour le trainig et la validation 
+    - `pd.DataFrame(modele.cv_results_)`: Statistiques sur les tests faits
+1. Creation (Objet python)
+2. Apprentissage (`.fit(X, Y)`)
+
+## Prediction
+1. Utilisation (`.predict(X)`)
+2. Creation d'un graphique (`plt.scatter(prediction, y)`) $ \longrightarrow $ Montre correlation entre realite et modele
+3. <span style="color:red"> Jugement: __Utiliser un dataset de training pour le jugement du modele est interdit__ </span>
+
+## Preprocessing hell 
+```mermaid 
+flowchart LR
+subgraph Data[Data]
+    X[X]
+    Y[Y]
+end
+T[Transform]
+M[Model]
+
+X --> T
+T --> M
+Y --> M
+```
+### StandardScaler / QuantileTransformer - Ramener les axes sur le meme taux de croissance
+Pour chaque colonne:
+- Calcul de moyenne 
+- Calcul de variance 
+Quantile: Toutes les donnees sont maintenant entre $0$ et $1$
+- Au lieu de regarder les donnees, on regarde leur positionnement par rapport aux autres et on ramene tout entre 0 et 1 
+- Limitation des outliers (ils n'ont plus de place ou aller)
+
+`PolynomialFeatures`: Se servir des donnees lineaires pour creer des donnees non-lineaires et entrainer le modele dessus
+
+`OneHotEncoder(sparse=False)`: Transformer un array de type ([['low'], ['medium'], ['high']])
+
+$ \frac{x - \overline{x}}{\sqrt{max{\left(x\right)} - min{\left(x\right)}}} $
+
+Utilite de pandas: Lire du CSV important et faire une database rapide.
