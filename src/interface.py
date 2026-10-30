@@ -106,7 +106,7 @@ class FenetrePrincipale(QMainWindow):
 
     def on_text_changed(self, texte):
         '''
-        Fonction effectuée chaque fois que le texte est changé dans un form.
+        Effectuee a chaque changement de l'input.
 
         Entrée: Texte dans la boîte de texte.
         '''
@@ -122,17 +122,18 @@ class FenetrePrincipale(QMainWindow):
         if reponse_budget > valeur_max or reponse_budget < valeur_min:
             raise ErreurInputBudgetFilm(f"Valeur minimale possible: {valeur_max} | Valeur maximale possible: {valeur_min} | Valeur entree: {reponse_budget}")
         
-
-    def predire(self):
+    def predire(self) -> bool:
         '''
         Prédire est la fonction actionnée quand le bouton 'prédire' est pressé. 
 
         Entrée: self (fenêtre principale)
-        Retourne: 
+        Retourne: True / False
         '''
-        self.valeur_reponse_genre = self.verification_reponse_genre(self.question_genre.currentText())
-        self.valeur_question_budget = self.verification_reponse_budget(int(self.question_budget.text()))
-        print("Réponse question Genre: " + self.valeur_question_genre + "\nRéponse question Budget: " + self.valeur_question_budget)
+        valeur_reponse_genre = self.verification_reponse_genre(self.question_genre.currentText())
+        valeur_reponse_budget = self.verification_reponse_budget(int(self.question_budget.text()))
+        print("Réponse question Genre: " + valeur_reponse_genre + "\nRéponse question Budget: " + valeur_reponse_budget)
+
+        # TODO: Ajouter le processus de prediction
 
 
     def generer_graphique(self):

@@ -94,3 +94,10 @@ Quantile: Toutes les donnees sont maintenant entre $0$ et $1$
 $ \frac{x - \overline{x}}{\sqrt{max{\left(x\right)} - min{\left(x\right)}}} $
 
 Utilite de pandas: Lire du CSV important et faire une database rapide.
+
+## Prediction 
+On cree plusieurs modeles similaires mais avec des hyperparametres diffretents. 
+- Utilisation de gridsearch
+- Comparaison de modeles avec des metriques
+
+### Metriques 
