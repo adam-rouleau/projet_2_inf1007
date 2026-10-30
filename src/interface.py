@@ -11,6 +11,11 @@ from PyQt6.QtWidgets import (
     QPushButton,
 )
 
+from exceptions import (
+    ErreurInputBudgetFilm, 
+    ErreurInputLongueurFilm
+)
+
 class FenetrePrincipale(QMainWindow):
     '''
     FenetrePrincipale crée la fenêtre principale. 
@@ -27,11 +32,13 @@ class FenetrePrincipale(QMainWindow):
         self.__layout_principal = QVBoxLayout()
         widget_principal.setLayout(self.__layout_principal)
 
+        # Titre Principal
         titre_application = QLabel("Prédicteur de succès au Box Office")
         titre_application.setAlignment(Qt.AlignmentFlag.AlignCenter)
         titre_application.setObjectName("titre")
         self.__layout_principal.addWidget(titre_application)
 
+        # Description Principale
         titre_application = QLabel("Entrez les données d'un film et découvrez s'il sera un succès ! \n Le film est considéré un succès si le revenu est 3x le budget ainsi qu'au-dessus de 100M$.")
         titre_application.setAlignment(Qt.AlignmentFlag.AlignCenter)
         titre_application.setObjectName("sous_titre")
@@ -54,14 +61,14 @@ class FenetrePrincipale(QMainWindow):
                                       ])
         self.__layout_principal.addWidget(self.question_genre)
 
-        self.question_2 = self.ajouter_form("Budget", layout_questions, "Reponse Placeholder")
-        self.question_2.textChanged.connect(self.on_text_changed)
+        self.question_budget = self.ajouter_form("Budget (USB) - Entre X et X2", layout_questions, "Reponse Placeholder")
+        self.question_budget.textChanged.connect(self.on_text_changed)
 
-        self.question_3 = self.ajouter_form("Rating", layout_questions, "Reponse Placeholder")
-        self.question_3.textChanged.connect(self.on_text_changed)
+        self.question_rating = self.ajouter_form("Rating", layout_questions, "Reponse Placeholder")
+        self.question_rating.textChanged.connect(self.on_text_changed)
 
-        self.question_4 = self.ajouter_form("Runtime", layout_questions, "Reponse Placeholder")
-        self.question_4.textChanged.connect(self.on_text_changed)
+        self.question_runtime = self.ajouter_form("Runtime", layout_questions, "Reponse Placeholder")
+        self.question_runtime.textChanged.connect(self.on_text_changed)
 
 
         # Layout Boutons
@@ -105,6 +112,17 @@ class FenetrePrincipale(QMainWindow):
         '''
         pass
 
+    def verification_reponse_budget(self, reponse_budget:int) -> int:
+        '''
+        Verifie que la valeur entree par l'utilisateur comme budget est valide (non-nulle et entre X1 et X2)
+        '''
+        # TODO: Ajouter les valeurs max et min (en fonction de ces memes valeurs dans la base de donnees)
+        valeur_min = 0
+        valeur_max = 0
+        if reponse_budget > valeur_max or reponse_budget < valeur_min:
+            raise ErreurInputBudgetFilm(f"Valeur minimale possible: {valeur_max} | Valeur maximale possible: {valeur_min} | Valeur entree: {reponse_budget}")
+        
+
     def predire(self):
         '''
         Prédire est la fonction actionnée quand le bouton 'prédire' est pressé. 
@@ -112,9 +130,10 @@ class FenetrePrincipale(QMainWindow):
         Entrée: self (fenêtre principale)
         Retourne: 
         '''
-        self.valeur_question_1 = self.question_1.text()
-        self.valeur_question_2 = self.question_2.text()
-        print("Réponse question 1: " + self.valeur_question_1 + "\nRéponse question 2: " + self.valeur_question_2)
+        self.valeur_reponse_genre = self.verification_reponse_genre(self.question_genre.currentText())
+        self.valeur_question_budget = self.verification_reponse_budget(int(self.question_budget.text()))
+        print("Réponse question Genre: " + self.valeur_question_genre + "\nRéponse question Budget: " + self.valeur_question_budget)
+
 
     def generer_graphique(self):
         '''
