@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QComboBox,
     QPushButton,
+    QDialog,
 )
 
 from exceptions import (
@@ -49,9 +50,10 @@ class FenetrePrincipale(QMainWindow):
         self.__layout_principal.addLayout(layout_questions)
 
         label_question_comedie = QLabel("Genre")
-        self.__layout_principal.addWidget(label_question_comedie)
+        layout_questions.addWidget(label_question_comedie)
         self.question_genre = QComboBox()
-        self.question_genre.addItems(["Comédie", 
+        self.question_genre.addItems(["Genre",
+                                      "Comédie", 
                                       "Science-Fiction", 
                                       "Horreur", 
                                       "Documentaire", 
@@ -59,7 +61,7 @@ class FenetrePrincipale(QMainWindow):
                                       "Suspense", 
                                       "Romance", 
                                       ])
-        self.__layout_principal.addWidget(self.question_genre)
+        layout_questions.addWidget(self.question_genre)
 
         self.question_budget = self.ajouter_form("Budget (USB) - Entre X et X2", layout_questions, "Reponse Placeholder")
         self.question_budget.textChanged.connect(self.on_text_changed)
@@ -70,6 +72,8 @@ class FenetrePrincipale(QMainWindow):
         self.question_runtime = self.ajouter_form("Runtime", layout_questions, "Reponse Placeholder")
         self.question_runtime.textChanged.connect(self.on_text_changed)
 
+        self.probleme_question = QLabel("Veuillez répondre à toutes les questions")
+        self.probleme_question.setVisible(False)
 
         # Layout Boutons
         layout_boutons = QHBoxLayout()
@@ -129,11 +133,53 @@ class FenetrePrincipale(QMainWindow):
         Entrée: self (fenêtre principale)
         Retourne: True / False
         '''
-        valeur_reponse_genre = self.verification_reponse_genre(self.question_genre.currentText())
-        valeur_reponse_budget = self.verification_reponse_budget(int(self.question_budget.text()))
-        print("Réponse question Genre: " + valeur_reponse_genre + "\nRéponse question Budget: " + valeur_reponse_budget)
+
+        # Vérification valeur genre
+        valeur_reponse_genre = self.question_genre.currentText()
+        if valeur_reponse_genre == "Genre":
+            dialog = Dialogue("Veuillez entrer un genre.", "OK")
+            dialog.activation()
+        else: 
+            reponse_genre_valide = True
+
+        # Vérification valeur Rating
+        valeur_reponse_score = self.question_rating.text()
+        try: 
+            valeur_reponse_score = float(valeur_reponse_score)
+            if valeur_reponse_score < 0 or valeur_reponse_score > 10:
+                dialog = Dialogue("Veuillez entrer un score sous forme de nombre à virgule entre 0 et 10.", "OK")
+                dialog.activation()
+            else: 
+                reponse_score_valide = True
+        except:
+            dialog = Dialogue("Veuillez entrer un score sous forme de nombre à virgule entre 0 et 10.", "OK")
+            dialog.activation()
+
+        # Vérification réponse budget
+        try:
+            valeur_reponse_budget = self.verification_reponse_budget(int(self.question_budget.text()))
+            reponse_budget_valide = True
+        except ValueError:
+            dialog = Dialogue("Veuillez entrer une réponse à toutes les questions.", "OK")
+            dialog.activation()
+
+        # Vérification réponse runtime
+        valeur_reponse_runtime = self.question_rating.text()
+        try: 
+            valeur_reponse_runtime = float(valeur_reponse_runtime)
+            # TODO: Remplacer les valeurs de runtime pour le maximum et le minimum qu'on a dans la base de données
+            if valeur_reponse_runtime < 0 or valeur_reponse_runtime > 0:
+                dialog = Dialogue("Veuillez entrer un runtime sous forme de nombre à virgule entre X et XXXX.", "OK")
+                dialog.activation()
+            else: 
+                reponse_runtime_valide = True
+        except:
+            dialog = Dialogue("Veuillez entrer un runtime sous forme de nombre à virgule entre X et XXXX.", "OK")
+            dialog.activation()
 
         # TODO: Ajouter le processus de prediction
+        if reponse_score_valide and reponse_runtime_valide and reponse_genre_valide and reponse_budget_valide:
+            print("Réponse question Genre: " + valeur_reponse_genre + "\nRéponse question Budget: " + valeur_reponse_budget)
 
 
     def generer_graphique(self):
@@ -143,3 +189,26 @@ class FenetrePrincipale(QMainWindow):
         Entrée: self (fenêtre principale)
         Retourne:
         '''
+
+
+class Dialogue(QDialog):
+    """
+    Objet héritant de QDialog créant une fenêtre de dialogue avec une ligne de texte et un bouton permettant de sortir.
+
+    """
+    def __init__(self, texte:str, texte_bouton:str):
+        super().__init__()
+        self.setWindowTitle("Attention")
+        layout_dialog = QVBoxLayout(self)
+        label = QLabel(texte, self)
+        layout_dialog.addWidget(label)
+        self.setMinimumSize(label.sizeHint())
+        bouton = QPushButton(texte_bouton, self)
+        layout_dialog.addWidget(bouton)
+        bouton.clicked.connect(self.accepter_dialogue)
+
+    def accepter_dialogue(self):
+        self.accept()
+
+    def activation(self):
+        self.exec()
