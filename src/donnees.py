@@ -10,13 +10,3 @@ def preparer_donnees(df : pd.DataFrame):
 
     X = df[["genre", "budget_usd", "rating", "runtime_min"]]
     y = df["blockbuster"]
-
-    return X, y
-
-def obtenir_genres(df: pd.DataFrame) -> list:
-    "Retourne les genres disponibles dans le dataset."
-
-    genres = df["genre"].unique()
-
-    return sorted(genres.tolist())
-
