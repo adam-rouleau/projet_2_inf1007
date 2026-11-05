@@ -8,5 +8,7 @@ def charger_donnees(chemin : str):
 def preparer_donnees(df : pd.DataFrame):
     "Separer ce qu'on veut predire et avec quoi on le predit"
 
-    X = df[["genre", "budget_usd", "rating", "runtime_min"]]
+    x = df[["genre", "budget_usd", "rating", "runtime_min"]]
     y = df["blockbuster"]
+
+    return x, y 
