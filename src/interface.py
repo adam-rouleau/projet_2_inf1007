@@ -1,3 +1,5 @@
+from abc import ABC
+
 from PyQt6.QtCore import Qt
 
 from PyQt6.QtWidgets import (  
@@ -19,9 +21,7 @@ from exceptions import (
 
 class FenetrePrincipale(QMainWindow):
     '''
-    FenetrePrincipale crée la fenêtre principale. 
-    
-    Hérite de: QMainWindow
+    Génération de la fenêtre principale.
     '''
     def __init__(self):
         super().__init__()
@@ -34,16 +34,10 @@ class FenetrePrincipale(QMainWindow):
         widget_principal.setLayout(self.__layout_principal)
 
         # Titre Principal
-        titre_application = QLabel("Prédicteur de succès au Box Office")
-        titre_application.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        titre_application.setObjectName("titre")
-        self.__layout_principal.addWidget(titre_application)
+        TitrePrincipal("Prédicteur du succès au box-office", self.__layout_principal)
 
         # Description Principale
-        titre_application = QLabel("Entrez les données d'un film et découvrez s'il sera un succès ! \n Le film est considéré un succès si le revenu est 3x le budget ainsi qu'au-dessus de 100M$.")
-        titre_application.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        titre_application.setObjectName("sous_titre")
-        self.__layout_principal.addWidget(titre_application)
+        SousTitre("Entrez les données d'un film et découvrez s'il sera un succès ! \n Le film est considéré un succès si le revenu est 3x le budget ainsi qu'au-dessus de 100M$.", self.__layout_principal)
 
         # Forms 
         layout_questions = QVBoxLayout()
@@ -125,8 +119,10 @@ class FenetrePrincipale(QMainWindow):
         valeur_max = 0
         if reponse_budget > valeur_max or reponse_budget < valeur_min:
             raise ErreurInputBudgetFilm(f"Valeur minimale possible: {valeur_max} | Valeur maximale possible: {valeur_min} | Valeur entree: {reponse_budget}")
+        else: 
+            return reponse_budget
         
-    def predire(self) -> bool:
+    def predire(self) -> bool | None:
         '''
         Prédire est la fonction actionnée quand le bouton 'prédire' est pressé. 
 
@@ -179,7 +175,7 @@ class FenetrePrincipale(QMainWindow):
 
         # TODO: Ajouter le processus de prediction
         if reponse_score_valide and reponse_runtime_valide and reponse_genre_valide and reponse_budget_valide:
-            print("Réponse question Genre: " + valeur_reponse_genre + "\nRéponse question Budget: " + valeur_reponse_budget)
+            print("Réponse question Genre: " + str(valeur_reponse_genre) + "\nRéponse question Budget: " + str(valeur_reponse_budget))
 
 
     def generer_graphique(self):
@@ -194,7 +190,6 @@ class FenetrePrincipale(QMainWindow):
 class Dialogue(QDialog):
     """
     Objet héritant de QDialog créant une fenêtre de dialogue avec une ligne de texte et un bouton permettant de sortir.
-
     """
     def __init__(self, texte:str, texte_bouton:str):
         super().__init__()
@@ -212,3 +207,21 @@ class Dialogue(QDialog):
 
     def activation(self):
         self.exec()
+
+
+class TitrePrincipal(QLabel):
+    """
+    Ajout d'un titre principal dans le layout spécifié.
+    """
+    def __init__(self, contenu:str, layout:QVBoxLayout):
+       super().__init__(contenu) 
+       self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+       self.setObjectName("titre")
+       layout.addWidget(self)
+
+class SousTitre(QLabel):
+    def __init__(self, contenu:str, layout:QVBoxLayout):
+        super().__init__(contenu)
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setObjectName("sous_titre")
+        layout.addWidget(self)

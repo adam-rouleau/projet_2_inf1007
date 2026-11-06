@@ -1,4 +1,3 @@
-
 import pandas as pd
 
 from sklearn.tree import DecisionTreeClassifier
@@ -9,6 +8,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.metrics import f1_score
 
 
+class ModeleBlockbuster(DecisionTreeClassifier):
 class ModeleBlockbuster:
 
     def __init__(self):
@@ -48,7 +48,7 @@ class ModeleBlockbuster:
     def predire(self, film: pd.DataFrame) -> int:
         """Retourne 1 pour blockbuster, sinon 0."""
 
-        resultat = self.modele.predict(film)
+        resultat = self.predict(film)
 
         return int(resultat[0])
 
