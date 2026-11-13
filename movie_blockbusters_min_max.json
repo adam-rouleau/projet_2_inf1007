@@ -1,0 +1,46 @@
+{
+    "movie_id": {
+        "minimum": 1,
+        "maximum": 5000
+    },
+    "year": {
+        "minimum": 1980,
+        "maximum": 2024
+    },
+    "runtime_min": {
+        "minimum": 60,
+        "maximum": 185
+    },
+    "budget_usd": {
+        "minimum": 105489.73,
+        "maximum": 2369800986.65
+    },
+    "revenue_usd": {
+        "minimum": 14032.44,
+        "maximum": 14955184373.97
+    },
+    "profit_usd": {
+        "minimum": -800900199.82,
+        "maximum": 14558453422.0
+    },
+    "roi": {
+        "minimum": -0.98,
+        "maximum": 43.322
+    },
+    "rating": {
+        "minimum": 1.0,
+        "maximum": 10.0
+    },
+    "vote_count": {
+        "minimum": 87,
+        "maximum": 18230861
+    },
+    "popularity": {
+        "minimum": 0.37,
+        "maximum": 627.87
+    },
+    "blockbuster": {
+        "minimum": 0,
+        "maximum": 1
+    }
+}

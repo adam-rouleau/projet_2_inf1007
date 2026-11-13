@@ -12,12 +12,14 @@ from PyQt6.QtWidgets import (
     QFrame,
 )
 
+import pandas as pd
+
 from exceptions import (
     ErreurInputBudgetFilm, 
     ErreurInputLongueurFilm
 )
 
-import pandas as pd
+from modele import ModeleBlockbuster
 
 class FenetrePrincipale(QMainWindow):
     '''
@@ -25,7 +27,7 @@ class FenetrePrincipale(QMainWindow):
     
     Hérite de: QMainWindow
     '''
-    def __init__(self, modele):
+    def __init__(self, modele:ModeleBlockbuster):
         super().__init__()
         self.modele = modele
 
@@ -235,8 +237,8 @@ class FenetrePrincipale(QMainWindow):
         '''
         Verifie que la valeur entree par l'utilisateur comme budget est valide (non-nulle et entre X1 et X2)
         '''
-        valeur_min = 0
-        valeur_max = 0
+        valeur_min = 105489.73
+        valeur_max = 2369800986.65
         if reponse_budget > valeur_max or reponse_budget < valeur_min:
             raise ErreurInputBudgetFilm(f"Valeur minimale possible: {valeur_max} | Valeur maximale possible: {valeur_min} | Valeur entree: {reponse_budget}")
         
@@ -283,7 +285,7 @@ class FenetrePrincipale(QMainWindow):
         valeur_reponse_runtime = self.question_rating.text()
         try: 
             valeur_reponse_runtime = float(valeur_reponse_runtime)
-            if valeur_reponse_runtime < 0 or valeur_reponse_runtime > 0:
+            if valeur_reponse_runtime < 60 or valeur_reponse_runtime > 185:
                 dialog = Dialogue("Veuillez entrer un runtime sous forme de nombre à virgule entre X et XXXX.", "OK")
                 dialog.activation()
             else: 
@@ -308,7 +310,7 @@ class FenetrePrincipale(QMainWindow):
         
         # 5. Faire la prédiction
         resultat = self.modele.predire(film)
-        print ("prediction du modoele :", resultat)
+        print("prediction du modoele :", resultat)
         
         # 6. Afficher le résultat
         if resultat == 1:
@@ -316,7 +318,7 @@ class FenetrePrincipale(QMainWindow):
         else:
             message = "Le film est prédit comme non-blockbuster."
         
-        Dialogue(message, "OK", "Résultat de la prédiction").activation()
+        Dialogue(message, "OK" ).activation()
         
         '''
             # 1. Vérifier le genre
