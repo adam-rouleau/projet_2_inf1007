@@ -244,7 +244,7 @@ class FenetrePrincipale(QMainWindow):
         
         return reponse_budget
         
-    def predire(self) -> bool:
+    def predire(self):
         '''
         Prédire est la fonction actionnée quand le bouton 'prédire' est pressé. 
 
@@ -282,7 +282,7 @@ class FenetrePrincipale(QMainWindow):
             dialog.activation()
 
         # Vérification réponse runtime
-        valeur_reponse_runtime = self.question_rating.text()
+        valeur_reponse_runtime = self.question_runtime.text()
         try: 
             valeur_reponse_runtime = float(valeur_reponse_runtime)
             if valeur_reponse_runtime < 60 or valeur_reponse_runtime > 185:
@@ -293,11 +293,6 @@ class FenetrePrincipale(QMainWindow):
         except:
             dialog = Dialogue("Veuillez entrer un runtime sous forme de nombre à virgule entre X et XXXX.", "OK")
             dialog.activation()
-
-        #if reponse_score_valide and reponse_runtime_valide and reponse_genre_valide and reponse_budget_valide:
-            #print("Réponse question Genre: " + valeur_reponse_genre + "\nRéponse question Budget: " + str(valeur_reponse_budget))
-
-
 
         # 4. Créer le tableau du film
 
@@ -319,47 +314,6 @@ class FenetrePrincipale(QMainWindow):
             message = "Le film est prédit comme non-blockbuster."
         
         Dialogue(message, "OK" ).activation()
-        
-        '''
-            # 1. Vérifier le genre
-        genre = self.question_genre.currentText()
-
-        if genre == "Selectionnez un genre":
-            Dialogue("Veuillez sélectionner un genre.", "OK").activation()
-            return
-
-        # 2. Convertir les entrées numériques
-        try:
-            budget = float(self.question_budget.text())
-            rating = float(self.question_rating.text())
-            runtime = int(self.question_runtime.text())
-
-        except ValueError:
-            Dialogue(
-                "Veuillez entrer des nombres valides.",
-                "OK"
-            ).activation()
-            return
-
-        # 3. Vérifier les limites
-        try:
-            budget = self.verification_reponse_budget(budget)
-
-            if not 0 <= rating <= 10:
-                raise ValueError("La note doit être entre 0 et 10.")
-
-            if runtime <= 0:
-                raise ErreurInputLongueurFilm(
-                    "La durée doit être supérieure à 0."
-                )
-
-        except (ValueError, ErreurInputBudgetFilm,
-                ErreurInputLongueurFilm) as erreur:
-
-            Dialogue(str(erreur), "OK").activation()
-            return
-
-        '''
 
     def generer_graphique(self):
         '''
