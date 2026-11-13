@@ -99,5 +99,6 @@ Utilite de pandas: Lire du CSV important et faire une database rapide.
 On cree plusieurs modeles similaires mais avec des hyperparametres diffretents. 
 - Utilisation de gridsearch
 - Comparaison de modeles avec des metriques
+- Utile de tester plusieurs poids pour chaque variable. Utiliser un gridsearch permet ensuite de comparer chacun des tests avec la valeur qu'il faudrait obtenir.
 
 ### Metriques 

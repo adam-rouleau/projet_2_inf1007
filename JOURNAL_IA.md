@@ -31,3 +31,7 @@ L'utilisateur doit également décommenter les lignes 12 à 14, permettant d'imp
         style = f.read()
         main_window.setStyleSheet(style)
 ```
+![Image de l'ancienne interface](AncienneInterface.png)
+![Image de l'interface actuelle](InterfaceActuelle.png)
+
+Lien de la conversation: https://share.gemini.google/cuvfKz5O4bVr
