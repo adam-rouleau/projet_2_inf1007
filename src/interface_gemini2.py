@@ -17,14 +17,17 @@ from exceptions import (
     ErreurInputLongueurFilm
 )
 
+import pandas as pd
+
 class FenetrePrincipale(QMainWindow):
     '''
     FenetrePrincipale crée la fenêtre principale. 
     
     Hérite de: QMainWindow
     '''
-    def __init__(self):
+    def __init__(self, modele):
         super().__init__()
+        self.modele = modele
 
         self.setWindowTitle("CinePredict - Prédicteur de succès au Box Office")
         self.setMinimumWidth(520)
@@ -65,12 +68,12 @@ class FenetrePrincipale(QMainWindow):
         
         self.question_genre = QComboBox()
         self.question_genre.addItems(["Sélectionnez un genre",
-                                      "Comédie", 
-                                      "Science-Fiction", 
-                                      "Horreur", 
-                                      "Documentaire", 
+                                      "Comedy", 
+                                      "Sci-Fi", 
+                                      "Horror", 
+                                      "Documentary", 
                                       "Action", 
-                                      "Suspense", 
+                                      "Thriller", 
                                       "Romance", 
                                       ])
         layout_carte.addWidget(self.question_genre)
@@ -237,6 +240,8 @@ class FenetrePrincipale(QMainWindow):
         if reponse_budget > valeur_max or reponse_budget < valeur_min:
             raise ErreurInputBudgetFilm(f"Valeur minimale possible: {valeur_max} | Valeur maximale possible: {valeur_min} | Valeur entree: {reponse_budget}")
         
+        return reponse_budget
+        
     def predire(self) -> bool:
         '''
         Prédire est la fonction actionnée quand le bouton 'prédire' est pressé. 
@@ -287,8 +292,72 @@ class FenetrePrincipale(QMainWindow):
             dialog = Dialogue("Veuillez entrer un runtime sous forme de nombre à virgule entre X et XXXX.", "OK")
             dialog.activation()
 
-        if reponse_score_valide and reponse_runtime_valide and reponse_genre_valide and reponse_budget_valide:
-            print("Réponse question Genre: " + valeur_reponse_genre + "\nRéponse question Budget: " + str(valeur_reponse_budget))
+        #if reponse_score_valide and reponse_runtime_valide and reponse_genre_valide and reponse_budget_valide:
+            #print("Réponse question Genre: " + valeur_reponse_genre + "\nRéponse question Budget: " + str(valeur_reponse_budget))
+
+
+
+        # 4. Créer le tableau du film
+
+        film = pd.DataFrame([{
+            "genre": valeur_reponse_genre,
+            "budget_usd": valeur_reponse_budget,
+            "rating": valeur_reponse_score,
+            "runtime_min": valeur_reponse_runtime
+        }])
+        
+        # 5. Faire la prédiction
+        resultat = self.modele.predire(film)
+        print ("prediction du modoele :", resultat)
+        
+        # 6. Afficher le résultat
+        if resultat == 1:
+            message = "Le film est prédit comme blockbuster !"
+        else:
+            message = "Le film est prédit comme non-blockbuster."
+        
+        Dialogue(message, "OK", "Résultat de la prédiction").activation()
+        
+        '''
+            # 1. Vérifier le genre
+        genre = self.question_genre.currentText()
+
+        if genre == "Selectionnez un genre":
+            Dialogue("Veuillez sélectionner un genre.", "OK").activation()
+            return
+
+        # 2. Convertir les entrées numériques
+        try:
+            budget = float(self.question_budget.text())
+            rating = float(self.question_rating.text())
+            runtime = int(self.question_runtime.text())
+
+        except ValueError:
+            Dialogue(
+                "Veuillez entrer des nombres valides.",
+                "OK"
+            ).activation()
+            return
+
+        # 3. Vérifier les limites
+        try:
+            budget = self.verification_reponse_budget(budget)
+
+            if not 0 <= rating <= 10:
+                raise ValueError("La note doit être entre 0 et 10.")
+
+            if runtime <= 0:
+                raise ErreurInputLongueurFilm(
+                    "La durée doit être supérieure à 0."
+                )
+
+        except (ValueError, ErreurInputBudgetFilm,
+                ErreurInputLongueurFilm) as erreur:
+
+            Dialogue(str(erreur), "OK").activation()
+            return
+
+        '''
 
     def generer_graphique(self):
         '''
@@ -303,7 +372,7 @@ class Dialogue(QDialog):
     """
     def __init__(self, texte: str, texte_bouton: str):
         super().__init__()
-        self.setWindowTitle("Attention")
+        self.setWindowTitle("Prediction")
         self.setMinimumWidth(320)
         
         layout_dialog = QVBoxLayout(self)
@@ -312,7 +381,7 @@ class Dialogue(QDialog):
         
         label = QLabel(texte, self)
         label.setWordWrap(True)
-        label.setStyleSheet("color: #f1f2f6; font-size: 13px;")
+        label.setStyleSheet("color: #1b1e2b; font-size: 13px;")
         layout_dialog.addWidget(label)
         
         bouton = QPushButton(texte_bouton, self)
