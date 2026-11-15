@@ -10,9 +10,17 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QDialog,
     QFrame,
+    QTableWidget,
+    QTableWidgetItem,
+    QHeaderView,
 )
 
+
 import pandas as pd
+from datetime import datetime
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+#from historique import enregistrer_prediction, lire_historique
 
 from exceptions import (
     ErreurInputBudgetFilm, 
@@ -109,6 +117,11 @@ class FenetrePrincipale(QMainWindow):
         self.bouton_generer_graphique.setObjectName("bouton_secondaire")
         self.bouton_generer_graphique.clicked.connect(self.generer_graphique)
         layout_boutons.addWidget(self.bouton_generer_graphique)
+
+        self.bouton_historique = QPushButton("Afficher l'historique")
+        self.bouton_historique.setObjectName("bouton_secondaire")
+        self.bouton_historique.clicked.connect(self.afficher_historique)
+        layout_boutons.addWidget(self.bouton_historique)
 
         # Application du style global (QSS) pour une ambiance chaleureuse et cinématographique
         self.appliquer_styles()
@@ -257,9 +270,8 @@ class FenetrePrincipale(QMainWindow):
         if valeur_reponse_genre == "Sélectionnez un genre" or valeur_reponse_genre == "Genre":
             dialog = Dialogue("Veuillez entrer un genre valide.", "OK")
             dialog.activation()
-        else: 
-            reponse_genre_valide = True
-
+            return
+        
         # Vérification valeur Rating
         valeur_reponse_score = self.question_rating.text()
         try: 
@@ -272,6 +284,7 @@ class FenetrePrincipale(QMainWindow):
         except:
             dialog = Dialogue("Veuillez entrer un score sous forme de nombre à virgule entre 0 et 10.", "OK")
             dialog.activation()
+            return
 
         # Vérification réponse budget
         try:
@@ -280,6 +293,7 @@ class FenetrePrincipale(QMainWindow):
         except ValueError:
             dialog = Dialogue("Veuillez entrer une réponse numérique valide pour le budget.", "OK")
             dialog.activation()
+            return
 
         # Vérification réponse runtime
         valeur_reponse_runtime = self.question_runtime.text()
@@ -293,8 +307,9 @@ class FenetrePrincipale(QMainWindow):
         except:
             dialog = Dialogue("Veuillez entrer un runtime sous forme de nombre à virgule entre X et XXXX.", "OK")
             dialog.activation()
+            return
 
-        # 4. Créer le tableau du film
+        # Créer le tableau du film
 
         film = pd.DataFrame([{
             "genre": valeur_reponse_genre,
@@ -303,11 +318,26 @@ class FenetrePrincipale(QMainWindow):
             "runtime_min": valeur_reponse_runtime
         }])
         
-        # 5. Faire la prédiction
+        # Faire la prédiction
         resultat = self.modele.predire(film)
         print("prediction du modoele :", resultat)
+
+        prediction = {
+        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "genre": valeur_reponse_genre,
+        "budget_usd": valeur_reponse_budget,
+        "rating": valeur_reponse_score,
+        "runtime_min": valeur_reponse_runtime,
+        "blockbuster": int(resultat)
+        }
+
+        try:
+            self.modele.enregistrer_prediction(prediction)
+        except (OSError, ValueError, TypeError) as erreur:
+            Dialogue(f"Prédiction calculée, mais historique non enregistré : {erreur}", "OK").activation()
+
         
-        # 6. Afficher le résultat
+        # Afficher le résultat
         if resultat == 1:
             message = "Le film est prédit comme blockbuster !"
         else:
@@ -315,51 +345,96 @@ class FenetrePrincipale(QMainWindow):
         
         Dialogue(message, "OK" ).activation()
         
-        '''
-            # 1. Vérifier le genre
-        genre = self.question_genre.currentText()
-
-        if genre == "Selectionnez un genre":
-            Dialogue("Veuillez sélectionner un genre.", "OK").activation()
-            return
-
-        # 2. Convertir les entrées numériques
-        try:
-            budget = float(self.question_budget.text())
-            rating = float(self.question_rating.text())
-            runtime = int(self.question_runtime.text())
-
-        except ValueError:
-            Dialogue(
-                "Veuillez entrer des nombres valides.",
-                "OK"
-            ).activation()
-            return
-
-        # 3. Vérifier les limites
-        try:
-            budget = self.verification_reponse_budget(budget)
-
-            if not 0 <= rating <= 10:
-                raise ValueError("La note doit être entre 0 et 10.")
-
-            if runtime <= 0:
-                raise ErreurInputLongueurFilm(
-                    "La durée doit être supérieure à 0."
-                )
-
-        except (ValueError, ErreurInputBudgetFilm,
-                ErreurInputLongueurFilm) as erreur:
-
-            Dialogue(str(erreur), "OK").activation()
-            return
-
-        '''
+        
 
     def generer_graphique(self):
-        '''
-        Générer Graphique est la fonction actionnée quand le bouton "Générer Graphique" est pressé.
-        '''
+        """Affiche une matrice de confusion"""
+        matrice = self.modele.matrice_confusion
+        if matrice is None:
+            Dialogue("Le modèle doit d'abord être entraîné.", "OK").activation()
+            return
+
+        fenetre = QDialog(self)
+        fenetre.setWindowTitle("Évaluation du modèle : matrice de confusion")
+        largeur = self.width()
+        hauteur = self.height()
+        fenetre.setFixedSize(largeur, hauteur)
+        layout = QVBoxLayout(fenetre)
+
+        figure = Figure(figsize=(5, 4), tight_layout=True)
+        axe = figure.add_subplot(111)
+        image = axe.imshow(matrice, cmap="Blues")
+        figure.colorbar(image, ax=axe, label="Nombre de films")
+        axe.set_title("Matrice de confusion")
+        axe.set_xlabel("Prédiction du modèle")
+        axe.set_ylabel("Vraie catégorie")
+        axe.set_xticks([0, 1], ["Non-blockbuster", "Blockbuster"])
+        axe.set_yticks([0, 1], ["Non-blockbuster", "Blockbuster"])
+
+        for i in range(2):
+            for j in range(2):
+                couleur = "white" if matrice[i, j] > matrice.max() / 2 else "black"
+                axe.text(j, i, str(matrice[i, j]), ha="center", va="center",
+                         color=couleur, fontsize=14)
+
+        canvas = FigureCanvas(figure)
+        layout.addWidget(canvas)
+        bouton_fermer = QPushButton("Fermer")
+        bouton_fermer.clicked.connect(fenetre.accept)
+        layout.addWidget(bouton_fermer)
+        fenetre.exec()
+
+    def afficher_historique(self) -> None:
+        """Affiche les prédictions passées dans un tableau ."""
+        try:
+            predictions = self.modele.lire_historique()
+        except (OSError, ValueError) as erreur:
+            Dialogue(f"Impossible de lire l'historique : {erreur}", "OK").activation()
+            return
+
+        fenetre = QDialog(self)
+        fenetre.setWindowTitle("Historique des prédictions")
+        largeur = self.width()
+        hauteur = self.height()
+        fenetre.setFixedSize(largeur, hauteur)
+        fenetre.setStyleSheet("""
+            QDialog { background-color: #12141c; color: #f1f2f6; }
+            QLabel { color: #f1f2f6; font-size: 13px; }
+            QTableWidget { background-color: #1b1e2b; color: #f1f2f6;
+                           gridline-color: #3d445b; alternate-background-color: #262b3d; }
+            QHeaderView::section { background-color: #2f3542; color: white;
+                                   padding: 6px; border: 1px solid #3d445b; }
+            QPushButton { background-color: #ff4757; color: white;
+                          padding: 10px; border-radius: 7px; }
+        """)
+        layout = QVBoxLayout(fenetre)
+        layout.addWidget(QLabel(f"Nombre de prédictions enregistrées : {len(predictions)}"))
+        tableau = QTableWidget(len(predictions), 6)
+        tableau.setHorizontalHeaderLabels([
+            "Date", "Genre", "Budget ($)", "Note", "Durée (min)", "Prédiction"
+        ])
+        tableau.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        tableau.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        tableau.setAlternatingRowColors(True)
+
+        for numero, prediction in enumerate(reversed(predictions)):
+            valeurs = [
+                prediction.get("date", ""),
+                prediction.get("genre", ""),
+                str(prediction.get("budget_usd", "")),
+                str(prediction.get("rating", "")),
+                str(prediction.get("runtime_min", "")),
+                "Blockbuster" if prediction.get("blockbuster", prediction.get("blockbuster_predit")) == 1
+                else "Non-blockbuster",
+            ]
+            for colonne, valeur in enumerate(valeurs):
+                tableau.setItem(numero, colonne, QTableWidgetItem(valeur))
+
+        layout.addWidget(tableau)
+        bouton_fermer = QPushButton("Fermer")
+        bouton_fermer.clicked.connect(fenetre.accept)
+        layout.addWidget(bouton_fermer)
+        fenetre.exec()
 
 class Dialogue(QDialog):
     """

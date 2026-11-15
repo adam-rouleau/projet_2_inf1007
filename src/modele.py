@@ -1,13 +1,14 @@
 import pandas as pd
 
 import matplotlib.pyplot as plt
-
+import os
+import json
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import make_pipeline
-from sklearn.metrics import f1_score, ConfusionMatrixDisplay
+from sklearn.metrics import f1_score, confusion_matrix
 from sklearn.pipeline import Pipeline
 
 
@@ -18,6 +19,8 @@ class ModeleBlockbuster:
         Crée le modèle et prépare la conversion des genres.
         """
         self.pipeline = None
+        self.matrice_confusion = None
+        self.chemin_historique = "historique.json"
 
     def entrainer(self, X: pd.DataFrame, y: pd.Series) -> float:
         """Entraîne le modèle et retourne le F1-score."""
@@ -61,8 +64,7 @@ class ModeleBlockbuster:
 
         predictions = self.recherchegrille.predict(X_test)
 
-        ConfusionMatrixDisplay.from_estimator(self.recherchegrille, X_test, y_test)
-        plt.show()
+        self.matrice_confusion = confusion_matrix(y_test, predictions, labels=[0, 1])
 
         print("Best parameters:", self.recherchegrille.best_params_)
         print("Best mean CV F1:", self.recherchegrille.best_score_)
@@ -76,3 +78,24 @@ class ModeleBlockbuster:
         resultat = self.recherchegrille.predict(film)
 
         return int(resultat[0])
+
+    def lire_historique(self):
+        if not os.path.exists(self.chemin_historique):
+            return []
+
+        with open(self.chemin_historique, "r", encoding="utf-8") as fichier:
+            try:
+                historique = json.load(fichier)
+            except json.JSONDecodeError as erreur:
+                raise ValueError("Le fichier historique.json est invalide") from erreur
+        if not isinstance(historique, list):
+            raise ValueError("L'historique doit contenir une liste")
+        return historique
+
+    def enregistrer_prediction(self, prediction):
+        historique = self.lire_historique()
+
+        historique.append(prediction)
+
+        with open(self.chemin_historique, "w", encoding="utf-8") as fichier:
+            json.dump(historique, fichier, indent=4)
