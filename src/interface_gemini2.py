@@ -320,53 +320,10 @@ class FenetrePrincipale(QMainWindow):
         
         Dialogue(message, "OK" ).activation()
         
-        '''
-            # 1. Vérifier le genre
-        genre = self.question_genre.currentText()
-
-        if genre == "Selectionnez un genre":
-            Dialogue("Veuillez sélectionner un genre.", "OK").activation()
-            return
-
-        # 2. Convertir les entrées numériques
-        try:
-            budget = float(self.question_budget.text())
-            rating = float(self.question_rating.text())
-            runtime = int(self.question_runtime.text())
-
-        except ValueError:
-            Dialogue(
-                "Veuillez entrer des nombres valides.",
-                "OK"
-            ).activation()
-            return
-
-        # 3. Vérifier les limites
-        try:
-            budget = self.verification_reponse_budget(budget)
-
-            if not 0 <= rating <= 10:
-                raise ValueError("La note doit être entre 0 et 10.")
-
-            if runtime <= 0:
-                raise ErreurInputLongueurFilm(
-                    "La durée doit être supérieure à 0."
-                )
-
-        except (ValueError, ErreurInputBudgetFilm,
-                ErreurInputLongueurFilm) as erreur:
-
-            Dialogue(str(erreur), "OK").activation()
-            return
-
-        '''
-
     def generer_graphique(self):
         '''
         Générer Graphique est la fonction actionnée quand le bouton "Générer Graphique" est pressé.
         '''
-        pass
-
 
 class Dialogue(QDialog):
     """
