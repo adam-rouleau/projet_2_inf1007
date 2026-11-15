@@ -71,8 +71,8 @@ class ModeleBlockbuster:
     def predire(self, film: pd.DataFrame) -> int:
         """Retourne 1 pour blockbuster, sinon 0."""
 
+        print(film.shape)
+        print(film)
         resultat = self.recherchegrille.predict(film)
 
         return int(resultat[0])
-
-  
