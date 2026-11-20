@@ -25,7 +25,7 @@ class DataManager():
             return self.__donnees_brutes
 
     @donnees_brutes.setter
-    def donnees_brutes(self, chemin:str) -> pd.DataFrame:
+    def donnees_brutes(self, chemin:str):
         """Charge les données du CSV."""
         self.__donnees_brutes = pd.read_csv(chemin)
 
