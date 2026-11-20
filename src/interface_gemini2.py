@@ -12,11 +12,11 @@ from PyQt6.QtWidgets import (
     QFrame,
 )
 
+import math
 import pandas as pd
 
 from exceptions import (
-    ErreurInputBudgetFilm, 
-    ErreurInputLongueurFilm
+    ErreurInputBudgetFilm,
 )
 
 from modele import ModeleBlockbuster
@@ -110,6 +110,12 @@ class FenetrePrincipale(QMainWindow):
         self.bouton_generer_graphique.clicked.connect(self.generer_graphique)
         layout_boutons.addWidget(self.bouton_generer_graphique)
 
+        self.resultat_prediction = QLabel("")
+        self.resultat_prediction.setObjectName("resultat_prediction")
+        self.resultat_prediction.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.resultat_prediction.setWordWrap(True)
+        self.__layout_principal.addWidget(self.resultat_prediction)
+
         # Application du style global (QSS) pour une ambiance chaleureuse et cinématographique
         self.appliquer_styles()
 
@@ -143,6 +149,12 @@ class FenetrePrincipale(QMainWindow):
             QLabel#label_erreur {
                 color: #ff4757;
                 font-weight: bold;
+            }
+            QLabel#resultat_prediction {
+                color: #f1f2f6;
+                font-size: 16px;
+                font-weight: bold;
+                padding: 12px;
             }
             QLineEdit, QComboBox {
                 background-color: #262b3d;
@@ -251,50 +263,42 @@ class FenetrePrincipale(QMainWindow):
         Entrée: self (fenêtre principale)
         Retourne: True / False
         '''
-
-        # Vérification valeur genre
         valeur_reponse_genre = self.question_genre.currentText()
         if valeur_reponse_genre == "Sélectionnez un genre" or valeur_reponse_genre == "Genre":
-            dialog = Dialogue("Veuillez entrer un genre valide.", "OK")
-            dialog.activation()
-        else: 
-            reponse_genre_valide = True
+            self.resultat_prediction.setStyleSheet("color: #ff4757;")
+            self.resultat_prediction.setText("Veuillez sélectionner un genre.")
+            return
 
-        # Vérification valeur Rating
-        valeur_reponse_score = self.question_rating.text()
-        try: 
-            valeur_reponse_score = float(valeur_reponse_score)
-            if valeur_reponse_score < 0 or valeur_reponse_score > 10:
-                dialog = Dialogue("Veuillez entrer un score sous forme de nombre à virgule entre 0 et 10.", "OK")
-                dialog.activation()
-            else: 
-                reponse_score_valide = True
-        except:
-            dialog = Dialogue("Veuillez entrer un score sous forme de nombre à virgule entre 0 et 10.", "OK")
-            dialog.activation()
-
-        # Vérification réponse budget
         try:
-            valeur_reponse_budget = self.verification_reponse_budget(int(self.question_budget.text()))
-            reponse_budget_valide = True
+            valeur_reponse_budget = float(self.question_budget.text())
         except ValueError:
-            dialog = Dialogue("Veuillez entrer une réponse numérique valide pour le budget.", "OK")
-            dialog.activation()
+            valeur_reponse_budget = math.nan
+        if not math.isfinite(valeur_reponse_budget) or not (
+            105489.73 <= valeur_reponse_budget <= 2369800986.65
+        ):
+            self.resultat_prediction.setStyleSheet("color: #ff4757;")
+            self.resultat_prediction.setText(
+                "Veuillez entrer un budget entre 105 489,73 $ et 2 369 800 986,65 $."
+            )
+            return
 
-        # Vérification réponse runtime
-        valeur_reponse_runtime = self.question_runtime.text()
-        try: 
-            valeur_reponse_runtime = float(valeur_reponse_runtime)
-            if valeur_reponse_runtime < 60 or valeur_reponse_runtime > 185:
-                dialog = Dialogue("Veuillez entrer un runtime sous forme de nombre à virgule entre X et XXXX.", "OK")
-                dialog.activation()
-            else: 
-                reponse_runtime_valide = True
-        except:
-            dialog = Dialogue("Veuillez entrer un runtime sous forme de nombre à virgule entre X et XXXX.", "OK")
-            dialog.activation()
+        try:
+            valeur_reponse_score = float(self.question_rating.text())
+        except ValueError:
+            valeur_reponse_score = math.nan
+        if not math.isfinite(valeur_reponse_score) or not 0 <= valeur_reponse_score <= 10:
+            self.resultat_prediction.setStyleSheet("color: #ff4757;")
+            self.resultat_prediction.setText("Veuillez entrer une note entre 0 et 10.")
+            return
 
-        # 4. Créer le tableau du film
+        try:
+            valeur_reponse_runtime = float(self.question_runtime.text())
+        except ValueError:
+            valeur_reponse_runtime = math.nan
+        if not math.isfinite(valeur_reponse_runtime) or not 60 <= valeur_reponse_runtime <= 185:
+            self.resultat_prediction.setStyleSheet("color: #ff4757;")
+            self.resultat_prediction.setText("Veuillez entrer une durée entre 60 et 185 minutes.")
+            return
 
         film = pd.DataFrame([{
             "genre": valeur_reponse_genre,
@@ -302,18 +306,15 @@ class FenetrePrincipale(QMainWindow):
             "rating": valeur_reponse_score,
             "runtime_min": valeur_reponse_runtime
         }])
-        
-        # 5. Faire la prédiction
+
         resultat = self.modele.predire(film)
-        print("prediction du modoele :", resultat)
-        
-        # 6. Afficher le résultat
         if resultat == 1:
-            message = "Le film est prédit comme blockbuster !"
+            message = "Blockbuster prédit !"
         else:
-            message = "Le film est prédit comme non-blockbuster."
-        
-        Dialogue(message, "OK" ).activation()
+            message = "Film prédit comme non-blockbuster."
+
+        self.resultat_prediction.setStyleSheet("color: #2ed573;")
+        self.resultat_prediction.setText(message)
 
     def generer_graphique(self):
         '''

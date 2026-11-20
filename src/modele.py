@@ -8,6 +8,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import f1_score, ConfusionMatrixDisplay
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder
 
 
 class ModeleBlockbuster:
@@ -33,8 +34,11 @@ class ModeleBlockbuster:
     @property 
     def pipeline(self) -> Pipeline:
         """Préparation données + RandomForest"""
+        preparation = ColumnTransformer([
+            ("genre", OneHotEncoder(handle_unknown="ignore"), ["genre"])
+        ], remainder="passthrough")
         return Pipeline([
-            ("preparation", self.donnees_clean), 
+            ("preparation", preparation),
             ("rf", RandomForestClassifier(random_state=42, n_jobs=-1))
         ])
 

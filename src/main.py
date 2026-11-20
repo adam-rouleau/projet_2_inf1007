@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 from PyQt6.QtWidgets import (
     QApplication,
@@ -12,7 +13,8 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # Charger .csv
-    data_manager = DataManager("movie_blockbusters.csv")
+    csv_path = Path(__file__).resolve().parent.parent / "movie_blockbusters.csv"
+    data_manager = DataManager(str(csv_path))
     donnees_clean = data_manager.donnees_clean
 
     # Créer et entraîner le modèle

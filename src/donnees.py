@@ -27,7 +27,7 @@ class DataManager():
     @donnees_brutes.setter
     def donnees_brutes(self, chemin:str) -> pd.DataFrame:
         """Charge les données du CSV."""
-        return pd.read_csv(chemin)
+        self.__donnees_brutes = pd.read_csv(chemin)
 
     @property
     def donnees_clean(self) -> tuple[pd.DataFrame, pd.Series]:
