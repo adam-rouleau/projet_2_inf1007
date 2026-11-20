@@ -23,8 +23,7 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 #from historique import enregistrer_prediction, lire_historique
 
 from exceptions import (
-    ErreurInputBudgetFilm, 
-    ErreurInputLongueurFilm
+    ErreurInputBudgetFilm,
 )
 
 from modele import ModeleBlockbuster
@@ -157,6 +156,12 @@ class FenetrePrincipale(QMainWindow):
                 color: #ff4757;
                 font-weight: bold;
             }
+            QLabel#resultat_prediction {
+                color: #f1f2f6;
+                font-size: 16px;
+                font-weight: bold;
+                padding: 12px;
+            }
             QLineEdit, QComboBox {
                 background-color: #262b3d;
                 border: 1px solid #3d445b;
@@ -264,8 +269,6 @@ class FenetrePrincipale(QMainWindow):
         Entrée: self (fenêtre principale)
         Retourne: True / False
         '''
-
-        # Vérification valeur genre
         valeur_reponse_genre = self.question_genre.currentText()
         if valeur_reponse_genre == "Sélectionnez un genre" or valeur_reponse_genre == "Genre":
             dialog = Dialogue("Veuillez entrer un genre valide.", "OK")
@@ -288,8 +291,7 @@ class FenetrePrincipale(QMainWindow):
 
         # Vérification réponse budget
         try:
-            valeur_reponse_budget = self.verification_reponse_budget(int(self.question_budget.text()))
-            reponse_budget_valide = True
+            valeur_reponse_score = float(self.question_rating.text())
         except ValueError:
             dialog = Dialogue("Veuillez entrer une réponse numérique valide pour le budget.", "OK")
             dialog.activation()
@@ -339,7 +341,7 @@ class FenetrePrincipale(QMainWindow):
         
         # Afficher le résultat
         if resultat == 1:
-            message = "Le film est prédit comme blockbuster !"
+            message = "Blockbuster prédit !"
         else:
             message = "Le film est prédit comme non-blockbuster."
         
