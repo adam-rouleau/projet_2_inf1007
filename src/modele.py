@@ -2,6 +2,14 @@ import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as plt
+import os
+import json
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import make_pipeline
+from sklearn.metrics import f1_score, confusion_matrix
 
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
@@ -16,6 +24,9 @@ class ModeleBlockbuster:
         """
         Crée le modèle et prépare la conversion des genres.
         """
+        self.pipeline = None
+        self.matrice_confusion = None
+        self.chemin_historique = "historique.json"
         self.donnees_clean = donnees_clean
         self.recherchegrille: GridSearchCV | None = None
         self.meilleur_seuil_ = 0.5
@@ -99,6 +110,7 @@ class ModeleBlockbuster:
         meilleur_f1 = 0.0 # plus bas comme ça quand augmente on a toujours mieux 
         meilleur_seuil = 0.5 # on commence au milieu
 
+        self.matrice_confusion = confusion_matrix(y_test, predictions, labels=[0, 1])
         # Trouver le meilleur seuil
         for seuil in seuils:
             predictions_seuil = (probas_val >= seuil).astype(int)
@@ -137,6 +149,28 @@ class ModeleBlockbuster:
         if self.recherchegrille is None:
             raise ValueError("Le modèle n'a pas encore été entraîné.")
 
+        return int(resultat[0])
+
+    def lire_historique(self):
+        if not os.path.exists(self.chemin_historique):
+            return []
+
+        with open(self.chemin_historique, "r", encoding="utf-8") as fichier:
+            try:
+                historique = json.load(fichier)
+            except json.JSONDecodeError as erreur:
+                raise ValueError("Le fichier historique.json est invalide") from erreur
+        if not isinstance(historique, list):
+            raise ValueError("L'historique doit contenir une liste")
+        return historique
+
+    def enregistrer_prediction(self, prediction):
+        historique = self.lire_historique()
+
+        historique.append(prediction)
+
+        with open(self.chemin_historique, "w", encoding="utf-8") as fichier:
+            json.dump(historique, fichier, indent=4)
         # Probabilité classe 1
         probas = self.recherchegrille.predict_proba(film)[:, 1]
         

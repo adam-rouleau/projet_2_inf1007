@@ -1,0 +1,50 @@
+[
+    {
+        "date": "2026-11-15 13:00:52",
+        "genre": "Horror",
+        "budget_usd": 5000000,
+        "rating": 8.5,
+        "runtime_min": 100.0,
+        "blockbuster": 0
+    },
+    {
+        "date": "2026-11-15 13:14:07",
+        "genre": "Comedy",
+        "budget_usd": 40000000,
+        "rating": 7.5,
+        "runtime_min": 90.0,
+        "blockbuster": 0
+    },
+    {
+        "date": "2026-11-15 13:14:17",
+        "genre": "Comedy",
+        "budget_usd": 40000000,
+        "rating": 7.5,
+        "runtime_min": 90.0,
+        "blockbuster": 0
+    },
+    {
+        "date": "2026-11-15 13:14:19",
+        "genre": "Comedy",
+        "budget_usd": 40000000,
+        "rating": 7.5,
+        "runtime_min": 90.0,
+        "blockbuster": 0
+    },
+    {
+        "date": "2026-11-15 13:23:20",
+        "genre": "Sci-Fi",
+        "budget_usd": 800000,
+        "rating": 5.5,
+        "runtime_min": 56.0,
+        "blockbuster": 0
+    },
+    {
+        "date": "2026-11-15 13:23:27",
+        "genre": "Sci-Fi",
+        "budget_usd": 800000,
+        "rating": 5.5,
+        "runtime_min": 90.0,
+        "blockbuster": 0
+    }
+]
