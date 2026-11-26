@@ -1,3 +1,16 @@
+
+# POUR ELLIOT:
+## Fait
+1. Delete les tests parce que maintenant tu as juste à exécuter `donnees.py` ou `modele.py` et il va te sortir ce qu'il fait. 
+2. Modification de la structure de Modele, de Donnees et d'Interface. - Beaucoup de choses se répétaient, je l'ai ai enlevées le plus possible et j'ai essayé de simplifier le plus possible les get et les sets. 
+3. Ajout de la sauvegarde du modèle: Maintenant si tu veux entraîner le modèle une nouvelle fois il faut que tu supprimes le joblib.
+4. Terminé: Le code fonctionne.
+## À faire 
+Il faut terminer la documentation et les autres livrables. Tu peux tester le programme mais à moins que tu voies un bug *flagrant* t'as pas besoin de corriger, c'est terminé. Consulte le document de remise et complète les documents. J'ai déjà mis quelques trucs qui pourraient t'aider à les remplir dans `documentation_et_notes`.
+
+**N'oublie pas de supprimer ce document avant de remettre.**
+
+
 # Justification des choix 
 
 ## Volet 1: Choix du jeu de données

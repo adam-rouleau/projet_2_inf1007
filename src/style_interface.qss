@@ -1,7 +1,156 @@
-QLabel#titre {
-    font-size: 40px;
+QMainWindow#fenetre_principale {
+    background-color: #12141c;
 }
 
-QLabel#sous_titre {
-    font-size: 20px;
+QMainWindow#fenetre_principale QLabel#titre {
+    font-size: 26px;
+    font-weight: bold;
+    color: #f1f2f6;
+    letter-spacing: 1px;
+}
+
+QMainWindow#fenetre_principale QLabel#sous_titre {
+    font-size: 13px;
+    color: #a4b0be;
+    line-height: 1.4;
+    margin-bottom: 5px;
+}
+
+QMainWindow#fenetre_principale QFrame#carte_form {
+    background-color: #1b1e2b;
+    border-radius: 12px;
+    border: 1px solid #2f3542;
+}
+
+QMainWindow#fenetre_principale QLabel#label_form {
+    font-size: 13px;
+    font-weight: bold;
+    color: #dfe4ea;
+}
+
+QMainWindow#fenetre_principale QLabel#label_erreur {
+    color: #ff4757;
+    font-weight: bold;
+}
+
+QMainWindow#fenetre_principale QLabel#resultat_prediction {
+    color: #f1f2f6;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px;
+}
+
+QMainWindow#fenetre_principale QLineEdit,
+QMainWindow#fenetre_principale QComboBox {
+    background-color: #262b3d;
+    border: 1px solid #3d445b;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #f1f2f6;
+}
+
+QMainWindow#fenetre_principale QLineEdit:focus,
+QMainWindow#fenetre_principale QComboBox:focus {
+    border: 1px solid #ff4757;
+    background-color: #2c3247;
+}
+
+QMainWindow#fenetre_principale QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 30px;
+    border-left-width: 0px;
+}
+
+QMainWindow#fenetre_principale QComboBox QAbstractItemView {
+    background-color: #262b3d;
+    color: #f1f2f6;
+    selection-background-color: #ff4757;
+    selection-color: white;
+    border: 1px solid #3d445b;
+}
+
+QMainWindow#fenetre_principale QPushButton#bouton_principal {
+    background-color: #ff4757;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 8px;
+    padding: 12px 20px;
+    border: none;
+}
+
+QMainWindow#fenetre_principale QPushButton#bouton_principal:hover {
+    background-color: #ff6b81;
+}
+
+QMainWindow#fenetre_principale QPushButton#bouton_principal:pressed {
+    background-color: #eb2f06;
+}
+
+QMainWindow#fenetre_principale QPushButton#bouton_secondaire {
+    background-color: #2f3542;
+    color: #f1f2f6;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 8px;
+    padding: 12px 20px;
+    border: 1px solid #57606f;
+}
+
+QMainWindow#fenetre_principale QPushButton#bouton_secondaire:hover {
+    background-color: #3d445b;
+}
+
+QMainWindow#fenetre_principale QPushButton#bouton_secondaire:pressed {
+    background-color: #1e272c;
+}
+
+QDialog#dialogue_historique {
+    background-color: #12141c;
+    color: #f1f2f6;
+}
+
+QDialog#dialogue_historique QLabel {
+    color: #f1f2f6;
+    font-size: 13px;
+}
+
+QDialog#dialogue_historique QTableWidget {
+    background-color: #1b1e2b;
+    color: #f1f2f6;
+    gridline-color: #3d445b;
+    alternate-background-color: #262b3d;
+}
+
+QDialog#dialogue_historique QHeaderView::section {
+    background-color: #2f3542;
+    color: white;
+    padding: 6px;
+    border: 1px solid #3d445b;
+}
+
+QDialog#dialogue_historique QPushButton {
+    background-color: #ff4757;
+    color: white;
+    padding: 10px;
+    border-radius: 7px;
+}
+
+QDialog#dialogue_message QLabel#message {
+    color: #1b1e2b;
+    font-size: 13px;
+}
+
+QDialog#dialogue_message QPushButton#bouton_message {
+    background-color: #ff4757;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    padding: 8px 16px;
+}
+
+QDialog#dialogue_message QPushButton#bouton_message:hover {
+    background-color: #ff6b81;
 }
